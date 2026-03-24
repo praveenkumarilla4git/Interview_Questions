@@ -1,0 +1,67 @@
+Open VS
+Create a new folder named DockerTest
+inside this folder create a new folder myapp
+add a new app.py file in this myapp folder
+#Write the simple code like below 
+
+########################################################################
+import sys
+
+# sys.argv[0] is the script name, sys.argv[1] is the first argument
+if len(sys.argv) > 1:
+    print(f"Hello, {sys.argv[1]}! This is your container speaking.")
+else:
+    print("Hello! You didn't provide a name.") 
+	
+########################################################################
+
+Now in the same myapp folder create a new file named Dockerfile
+
+Write the below code into the Dockerfile created
+
+########################################################################
+FROM python:3.9-slim
+
+WORKDIR /app
+COPY app.py .
+
+# The 'Fixed' part of the command
+ENTRYPOINT ["python", "app.py"]
+
+# The 'Overridable' default argument
+CMD ["Stranger"]
+
+#######################################################################
+
+Now open the VS terminal and nacvigate to inside myapp folder
+type and run the command "docker build -t my-greeting-tool ."
+
+with the above command we are going to build a new docker image. you can check it using "docker images" command
+
+#######################################################################
+
+Now test this:
+run
+docker run my-greeting-tool
+
+we can see the "Hello, Stranger! This is your container speaking." as output
+
+now test this:
+run
+docker run my-greeting-tool Praveen
+
+You can see the below as output in this case:
+
+Hello, Praveen! This is your container speaking.
+
+########################################################################
+
+Now the WHY PART of the whole flow?
+
+when we just gave the command to run "docker run my-greeting-tool" the docker executes the default CMD part which has Stranger
+while when we have run the "docker run my-greeting-tool Praveen"
+docker has some input argument Praveen to take care of so this will execute what is in the execute part and overrides CMD in the Dockerfile code
+
+So this is what the difference between ENTRYPOINT and CMD
+
+
