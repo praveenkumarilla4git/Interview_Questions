@@ -1,3 +1,69 @@
+Interview Question: What is the difference between ENTRYPOINT and CMD?
+The Concept
+In Docker, both instructions define what command runs when a container starts, but they handle arguments differently:
+ENTRYPOINT: The "Fixed" executable. It defines the main command of the container.
+CMD: The "Flexible" default. It provides default arguments that can be easily overridden by the user at runtime.
+
+Practical Walkthrough
+
+1. Setup the Application
+Create a directory named myapp and add a simple Python script (app.py):
+
+import sys
+# sys.argv[1] captures the first argument passed to the script
+if len(sys.argv) > 1:
+    print(f"Hello, {sys.argv[1]}! This is your container speaking.")
+else:
+    print("Hello! You didn't provide a name.")
+
+2. Define the Dockerfile
+In the same folder, create a Dockerfile:
+
+Dockerfile
+FROM python:3.9-slim
+
+WORKDIR /app
+COPY app.py .
+
+# ENTRYPOINT: The command that ALWAYS runs
+ENTRYPOINT ["python", "app.py"]
+
+# CMD: The default argument (overridable)
+CMD ["Stranger"]
+
+3. Build the Image
+Open your terminal inside the myapp folder and build the image:
+docker build -t my-greeting-tool .
+
+
+The Comparison (The "Why")
+Scenario A: Using the Default
+Run the container without any extra arguments:
+docker run my-greeting-tool
+
+Output: Hello, Stranger! This is your container speaking.
+
+Explanation: Since no argument was provided, Docker used the default value defined in CMD (Stranger).
+
+Scenario B: Overriding the Default
+Run the container with a specific name:
+docker run my-greeting-tool Praveen
+
+Output: Hello, Praveen! This is your container speaking.
+
+Explanation: The input Praveen overrides the CMD instruction. Docker keeps the ENTRYPOINT (python app.py) but replaces Stranger with your new input.
+
+Key Summary for Interviews
+Use ENTRYPOINT when you want the container to behave like a specific executable (e.g., a web server or a CLI tool). It makes the container's purpose "fixed."
+
+Use CMD to provide "sane defaults" that users can change without having to redefine the entire command.
+
+Combining them allows you to create a "Command + Default Argument" pattern, which is the industry best practice for flexible DevOps images.
+
+
+If you are a complete beginner then follow the below steps in the Visual Studio Code:
+prerequisites: Docker, Python
+
 Open VS
 Create a new folder named DockerTest
 inside this folder create a new folder myapp
